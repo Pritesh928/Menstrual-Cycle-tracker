@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menstrual Cycle Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+    }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to bottom, #fff0f5, #ffe6eb);
+        color: #333;
+    }
+    header {
+        position: fixed;
+        width: 100%;
+        background-color: #c9457150;
+        color: #552337;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    nav {
+        position: fixed;
+        right: 10px;
+        top: 15px;
+    }
+    nav a {
+        color: #552337;
+        text-decoration: none;
+        margin: 0 8px;
+        font-size: 0.9em;
+        font-weight: 600;
+    }
+    section {
+        padding: 100px 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .container {
+        max-width: 500px;
+        width: 100%;
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+    input {
+        width: 90%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1em;
+    }
+    button {
+        background: #ff4d88;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1em;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background: #e6005c;
+        transform: scale(1.05);
+    }
+    .result {
+        margin-top: 15px;
+        padding: 10px;
+        background: #fff0f5;
+        border-radius: 8px;
+    }
+    ul {
+        list-style: none;
+        padding-left: 0;
+    }
+    ul li {
+        margin: 10px 0;
+        background: #ffe6eb;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #c9457150;
+        color: #552337;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    Menstrual Cycle Tracker
+    <nav>
+        <a href="#tracker">Tracker</a>
+        <a href="#tips">Tips</a>
+        <a href="#about">About</a>
+    </nav>
+</header>
+
+<section id="tracker">
+    <div class="container">
+        <h2>Track Your Cycle</h2>
+        <label for="lastPeriod">Last Period Date:</label>
+        <input type="date" id="lastPeriod">
+
+        <label for="cycleLength">Cycle Length (days):</label>
+        <input type="number" id="cycleLength" value="28">
+
+        <button onclick="trackCycle()">Calculate</button>
+        <div class="result" id="result"></div>
+    </div>
+</section>
+
+<section id="tips">
+    <div class="container">
+        <h2>Precautions & Self-Care</h2>
+        <ul>
+            <li>Maintain a healthy diet and drink plenty of water.</li>
+            <li>Get enough rest and sleep during your period.</li>
+            <li>Practice light exercise or yoga to reduce cramps.</li>
+            <li>Change sanitary products regularly to avoid infections.</li>
+            <li>Track symptoms to discuss with a doctor if needed.</li>
+            <li>If cycles are irregular for a long time, seek medical advice.</li>
+        </ul>
+    </div>
+</section>
+
+<section id="about">
+    <div class="container">
+        <h2>About This App</h2>
+        <p>This menstrual cycle tracker helps you predict your next period date and fertile window based on your last period and cycle length.  
+        <br><br>Note: These predictions are only estimates. Always consult a healthcare professional for accurate advice.</p>
+    </div>
+</section>
+
+<footer>
+    &copy; 2025 Menstrual Cycle Tracker | Made By Napps✨✨
+</footer>
+
+<script>
+function trackCycle() {
+    let lastPeriod = document.getElementById("lastPeriod").value;
+    let cycleLength = parseInt(document.getElementById("cycleLength").value);
+
+    if (!lastPeriod || cycleLength < 20 || cycleLength > 40) {
+        document.getElementById("result").innerHTML = 
+        "<span style='color:red;'>Please enter valid details.</span>";
+        return;
+    }
+
+    // Save in localStorage
+    localStorage.setItem("lastPeriod", lastPeriod);
+    localStorage.setItem("cycleLength", cycleLength);
+
+    let lastDate = new Date(lastPeriod);
+    let nextPeriod = new Date(lastDate);
+    nextPeriod.setDate(lastDate.getDate() + cycleLength);
+
+    let fertileStart = new Date(lastDate);
+    fertileStart.setDate(lastDate.getDate() + cycleLength - 14 - 2);
+
+    let fertileEnd = new Date(lastDate);
+    fertileEnd.setDate(lastDate.getDate() + cycleLength - 14 + 2);
+
+    document.getElementById("result").innerHTML = `
+        <strong>Predicted Next Period:</strong> ${nextPeriod.toDateString()}<br>
+        <strong>Fertile Window:</strong> ${fertileStart.toDateString()} - ${fertileEnd.toDateString()}<br>
+        <small style="color:gray;">*Estimates only. Consult a doctor for accuracy.</small>
+    `;
+}
+
+// Load saved data
+window.onload = function() {
+    if (localStorage.getItem("lastPeriod")) {
+        document.getElementById("lastPeriod").value = localStorage.getItem("lastPeriod");
+    }
+    if (localStorage.getItem("cycleLength")) {
+        document.getElementById("cycleLength").value = localStorage.getItem("cycleLength");
+    }
+};
+</script>
+
+</body>
+</html>
